@@ -3,24 +3,21 @@ name: Build APK
 on:
   push:
     branches:
-      - main  # workflow triggers on pushes to main branch
+      - main
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout your repo
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Step 2: Build APK using Buildozer Action
       - name: Build APK
         uses: ArtemSBulgakov/buildozer-action@v1
         with:
           command: android debug
 
-      # Step 3: Upload the APK as artifact
       - name: Upload APK
         uses: actions/upload-artifact@v3
         with:
