@@ -1,10 +1,9 @@
-# Trigger Build APK workflow
 name: Build APK
 
 on:
   push:
     branches:
-      - main  # triggers workflow on pushes to main
+      - main
 
 jobs:
   build:
