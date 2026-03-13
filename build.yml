@@ -3,7 +3,7 @@ name: Build APK
 on:
   push:
     branches:
-      - main
+      - main  # triggers workflow on pushes to main
 
 jobs:
   build:
