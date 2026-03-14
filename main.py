@@ -14,7 +14,8 @@ from kivy.utils import platform
 import webbrowser
 import os
 
-Window.clearcolor = (0.08,0.08,0.08,1)
+Window.clearcolor = (0.08, 0.08, 0.08, 1)
+
 
 AI_PLATFORMS = [
     ("ChatGPT","https://chat.openai.com"),
@@ -22,16 +23,16 @@ AI_PLATFORMS = [
     ("Claude","https://claude.ai"),
     ("Perplexity","https://www.perplexity.ai"),
     ("Copilot","https://copilot.microsoft.com"),
+    ("DeepSeek","https://chat.deepseek.com"),
+    ("Poe AI","https://poe.com"),
+    ("Character AI","https://character.ai"),
+    ("You AI","https://you.com"),
+    ("HuggingChat","https://huggingface.co/chat"),
     ("Grammarly","https://grammarly.com"),
     ("QuillBot","https://quillbot.com"),
     ("Replit","https://replit.com"),
     ("Midjourney","https://www.midjourney.com"),
     ("Leonardo AI","https://leonardo.ai"),
-    ("Poe AI","https://poe.com"),
-    ("Character AI","https://character.ai"),
-    ("HuggingChat","https://huggingface.co/chat"),
-    ("You AI","https://you.com"),
-    ("DeepAI","https://deepai.org")
 ]
 
 
@@ -40,29 +41,29 @@ class CircularImage(Widget):
     def __init__(self, source, **kwargs):
         super().__init__(**kwargs)
 
-        self.size_hint = (None,None)
-        self.size = (200,200)
+        self.size_hint = (None, None)
+        self.size = (200, 200)
 
         with self.canvas:
-            self.ellipse = Ellipse(source=source,pos=self.pos,size=self.size)
+            self.ellipse = Ellipse(source=source, pos=self.pos, size=self.size)
 
-        self.bind(pos=self.update,size=self.update)
+        self.bind(pos=self.update, size=self.update)
 
-    def update(self,*args):
-        self.ellipse.pos=self.pos
-        self.ellipse.size=self.size
+    def update(self, *args):
+        self.ellipse.pos = self.pos
+        self.ellipse.size = self.size
 
 
 class AIHub(App):
 
     def build(self):
 
-        main = BoxLayout(orientation='vertical',padding=10,spacing=10)
+        main = BoxLayout(orientation="vertical", padding=10, spacing=10)
 
         title = Label(
             text="AI HUB",
             font_size=32,
-            size_hint=(1,0.12),
+            size_hint=(1, 0.12),
             color=(1,1,1,1)
         )
 
@@ -94,9 +95,23 @@ class AIHub(App):
 
         self.grid.bind(minimum_height=self.grid.setter('height'))
 
-        self.buttons=[]
+        scroll.add_widget(self.grid)
 
-        for name,url in AI_PLATFORMS:
+        main.add_widget(title)
+        main.add_widget(self.search)
+        main.add_widget(about_btn)
+        main.add_widget(scroll)
+
+        self.populate_buttons(AI_PLATFORMS)
+
+        return main
+
+
+    def populate_buttons(self, tools):
+
+        self.grid.clear_widgets()
+
+        for name, url in tools:
 
             btn = Button(
                 text=name,
@@ -106,26 +121,16 @@ class AIHub(App):
                 color=(1,1,1,1)
             )
 
-            btn.bind(on_press=lambda x,u=url:self.open_link(u))
+            btn.bind(on_press=lambda x, u=url: self.open_link(u))
 
             self.grid.add_widget(btn)
 
-            self.buttons.append((name,btn))
 
-        scroll.add_widget(self.grid)
-
-        main.add_widget(title)
-        main.add_widget(self.search)
-        main.add_widget(about_btn)
-        main.add_widget(scroll)
-
-        return main
-
-
-    def open_link(self,url):
+    def open_link(self, url):
 
         if platform == "android":
             from jnius import autoclass
+
             PythonActivity = autoclass('org.kivy.android.PythonActivity')
             Intent = autoclass('android.content.Intent')
             Uri = autoclass('android.net.Uri')
@@ -138,36 +143,26 @@ class AIHub(App):
             webbrowser.open(url)
 
 
-    def update_search(self,instance,value):
+    def update_search(self, instance, value):
 
-        self.grid.clear_widgets()
+        filtered = []
 
-        for name,url in AI_PLATFORMS:
-
+        for name, url in AI_PLATFORMS:
             if value.lower() in name.lower():
+                filtered.append((name, url))
 
-                btn = Button(
-                    text=name,
-                    size_hint_y=None,
-                    height=160,
-                    background_color=(0.2,0.4,0.8,1),
-                    color=(1,1,1,1)
-                )
-
-                btn.bind(on_press=lambda x,u=url:self.open_link(u))
-
-                self.grid.add_widget(btn)
+        self.populate_buttons(filtered)
 
 
-    def show_about(self,instance):
+    def show_about(self, instance):
 
         layout = BoxLayout(
-            orientation='vertical',
+            orientation="vertical",
             padding=10,
             spacing=10
         )
 
-        image_path = os.path.join("assets","belachew.jpg")
+        image_path = os.path.join("assets", "belachew.jpg")
 
         circular_img = CircularImage(image_path)
 
@@ -178,7 +173,8 @@ AI HUB
 Developed by:
 Belachew Damtie
 
-Student of Geospatial Analytics
+PhD Student in
+Geospatial Analytics
 and Remote Sensing
 
 Bahir Dar University
